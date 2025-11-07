@@ -5,13 +5,22 @@
 *.userosscache
 *.sln.docstates
 
-# Build
-bin/
-obj/
-out/
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
 
-# Rider
-.idea/
+# Visual Studio Code
+.vscode/
+.history/
 
 # NuGet
 *.nupkg
