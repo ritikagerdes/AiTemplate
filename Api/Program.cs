@@ -68,6 +68,9 @@ builder.Services.AddSingleton<PromptTemplateService>();
 builder.Services.AddSingleton<VectorSearchService>();
 builder.Services.AddCors();
 
+// Local stub service for development (fallback when external providers are not configured)
+builder.Services.AddSingleton<IAiService, Api.Services.LocalAiService>();
+
 WebApplication app = builder.Build();
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
