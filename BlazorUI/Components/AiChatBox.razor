@@ -1,36 +1,91 @@
-﻿@using Utils
+@using Utils
+@using System.Net.Http.Json
 
 <div class="ai-chat-box">
-	<textarea @bind="UserInput" rows="4" placeholder="@Placeholder"></textarea>
-	<button @onclick="SendAsync">@ButtonText</button>
+    <textarea @bind="UserInput" rows="4" placeholder="@Placeholder" disabled="@IsLoading"></textarea>
+    <button @onclick="SendAsync" disabled="@IsLoading">
+        @if (IsLoading)
+        {
+            <span>Loading...</span>
+        }
+        else
+        {
+            @ButtonText
+        }
+    </button>
 
-	<p class="mt-2">@ResponseText</p>
+    @if (!string.IsNullOrEmpty(ErrorMessage))
+    {
+        <div class="alert alert-danger mt-2">
+            @ErrorMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(ResponseText))
+    {
+        <p class="mt-2">@ResponseText</p>
+    }
 </div>
 
 @code {
-	[Parameter] public string Placeholder { get; set; } = "Ask a question...";
-	[Parameter] public string ButtonText { get; set; } = "Send";
-	[Parameter] public string Endpoint { get; set; } = "/ai";
-	[Parameter] public AiProvider SelectedProvider { get; set; }
+    [Parameter] public string Placeholder { get; set; } = "Ask a question...";
+    [Parameter] public string ButtonText { get; set; } = "Send";
+    [Parameter] public string Endpoint { get; set; } = "/ai";
+    [Parameter] public AiProvider SelectedProvider { get; set; }
 
-	[Inject] private HttpClient Http { get; set; }
+    [Inject] public required HttpClient Http { get; set; }
 
-	private string UserInput { get; set; } = string.Empty;
-	private string ResponseText { get; set; } = string.Empty;
+    private string UserInput { get; set; } = string.Empty;
+    private string ResponseText { get; set; } = string.Empty;
+    private string ErrorMessage { get; set; } = string.Empty;
+    private bool IsLoading { get; set; }
 
-	private async Task SendAsync()
-	{
-		if (string.IsNullOrWhiteSpace(UserInput)) return;
+    private async Task SendAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UserInput)) return;
 
-		var request = new AiRequest
-			{
-				Input = UserInput,
-				Provider = SelectedProvider
-			};
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+            ResponseText = string.Empty;
 
-		var resp = await Http.PostAsJsonAsync(Endpoint, request);
-		var data = await resp.Content.ReadFromJsonAsync<AiResponse>();
-		ResponseText = data?.Output ?? "No response";
-	}
+            var request = new AiRequest
+            {
+                Input = UserInput,
+                Provider = SelectedProvider
+            };
+
+            var resp = await Http.PostAsJsonAsync(Endpoint, request);
+            if (!resp.IsSuccessStatusCode)
+            {
+                ErrorMessage = $"Error: {resp.StatusCode} - {await resp.Content.ReadAsStringAsync()}";
+                return;
+            }
+
+            var data = await resp.Content.ReadFromJsonAsync<AiResponse>();
+            if (data == null)
+            {
+                ErrorMessage = "Error: Invalid response from server";
+                return;
+            }
+
+            ResponseText = data.Output;
+            UserInput = string.Empty;
+        }
+        catch (HttpRequestException ex)
+        {
+            ErrorMessage = $"Error connecting to API: {ex.Message}";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Unexpected error: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+            StateHasChanged();
+        }
+    }
 
 }
