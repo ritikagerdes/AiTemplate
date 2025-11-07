@@ -1,0 +1,36 @@
+﻿@using Utils
+
+<div class="ai-chat-box">
+	<textarea @bind="UserInput" rows="4" placeholder="@Placeholder"></textarea>
+	<button @onclick="SendAsync">@ButtonText</button>
+
+	<p class="mt-2">@ResponseText</p>
+</div>
+
+@code {
+	[Parameter] public string Placeholder { get; set; } = "Ask a question...";
+	[Parameter] public string ButtonText { get; set; } = "Send";
+	[Parameter] public string Endpoint { get; set; } = "/ai";
+	[Parameter] public AiProvider SelectedProvider { get; set; }
+
+	[Inject] private HttpClient Http { get; set; }
+
+	private string UserInput { get; set; } = string.Empty;
+	private string ResponseText { get; set; } = string.Empty;
+
+	private async Task SendAsync()
+	{
+		if (string.IsNullOrWhiteSpace(UserInput)) return;
+
+		var request = new AiRequest
+			{
+				Input = UserInput,
+				Provider = SelectedProvider
+			};
+
+		var resp = await Http.PostAsJsonAsync(Endpoint, request);
+		var data = await resp.Content.ReadFromJsonAsync<AiResponse>();
+		ResponseText = data?.Output ?? "No response";
+	}
+
+}

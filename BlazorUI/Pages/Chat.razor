@@ -1,0 +1,14 @@
+﻿@page "/chat"
+@using BlazorUI.Components
+@inject HttpClient Http
+
+<PageTitle>AI Chat</PageTitle>
+
+<AiProviderSelector @bind-SelectedProvider="SelectedProvider" />
+<AiChatBox Endpoint="/ai" SelectedProvider="@SelectedProvider" Placeholder="Ask me something" ButtonText="Send" />
+
+
+@code {
+	// This property must exist for the bind
+	public AiProvider SelectedProvider { get; set; } = AiProvider.OpenAI;
+}

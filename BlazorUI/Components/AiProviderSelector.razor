@@ -1,0 +1,28 @@
+﻿@using Utils
+@inject HttpClient Http
+
+<select @onchange="OnChange" class="form-select">
+	@foreach (var provider in Providers)
+	{
+		<option value="@provider.ToString()" selected="@(provider == SelectedProvider)">
+			@provider
+		</option>
+	}
+</select>
+
+@code {
+	[Parameter] public AiProvider SelectedProvider { get; set; }
+	[Parameter] public EventCallback<AiProvider> SelectedProviderChanged { get; set; }
+
+	// List of enum values
+	private AiProvider[] Providers => (AiProvider[])Enum.GetValues(typeof(AiProvider));
+
+	private async Task OnChange(ChangeEventArgs e)
+	{
+		if (Enum.TryParse<AiProvider>(e.Value?.ToString(), out var parsed))
+		{
+			SelectedProvider = parsed;
+			await SelectedProviderChanged.InvokeAsync(SelectedProvider);
+		}
+	}
+}
