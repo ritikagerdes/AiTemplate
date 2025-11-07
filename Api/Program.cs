@@ -100,5 +100,10 @@ app.MapPost("/rag", async (AiRequest req, AiServiceFactory factory, VectorSearch
 	return Results.Ok(new AiResponse(output));
 });
 
+// Root and health endpoints so visiting the API base URL doesn't return 404
+app.MapGet("/", () => Results.Ok(new { message = "AI Gateway API is running", routes = new[] { "/ai", "/ai/template/{templateKey}", "/rag", "/health" } }));
+
+app.MapGet("/health", () => Results.Ok(new { status = "Healthy" }));
+
 
 app.Run();
