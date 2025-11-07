@@ -1,4 +1,4 @@
-﻿using Utils;
+using Utils;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +20,13 @@ public class OpenAiService : IAiService
 
 	public async Task<string> Generate(string prompt)
 	{
+		// If HttpClient BaseAddress is not configured, return a local stub to avoid failing in dev
+		if (this._http.BaseAddress == null)
+		{
+			_logger.LogWarning("OpenAiService invoked but HttpClient BaseAddress is not configured. Returning stub response.");
+			return $"[OpenAI stub] {prompt}";
+		}
+
 		_ = this._config["OpenAiApiKey"];
 		// Example: call OpenAI completions API
 		HttpResponseMessage response = await this._http.PostAsJsonAsync("v1/completions", new
@@ -34,6 +41,12 @@ public class OpenAiService : IAiService
 
 	public async Task<float[]> GetEmbedding(string input)
 	{
+		if (this._http.BaseAddress == null)
+		{
+			_logger.LogWarning("OpenAiService GetEmbedding invoked but HttpClient BaseAddress is not configured. Returning empty embedding.");
+			return Array.Empty<float>();
+		}
+
 		HttpResponseMessage response = await this._http.PostAsJsonAsync("v1/embeddings", new
 		{
 			model = "text-embedding-3-large",
