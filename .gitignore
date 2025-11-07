@@ -1,0 +1,34 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build
+bin/
+obj/
+out/
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+
+# ASP.NET
+wwwroot/dist/
+wwwroot/node_modules/
+*.db
+
+# VS Code
+.vscode/
+
+# Logs
+*.log
+
+# User secrets
+secrets.json

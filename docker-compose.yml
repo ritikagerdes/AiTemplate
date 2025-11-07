@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Api/Dockerfile
+    ports:
+      - "5000:5000"
+
+  blazor:
+    build:
+      context: .
+      dockerfile: BlazorUI/Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - api
