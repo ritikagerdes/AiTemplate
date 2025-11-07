@@ -1,6 +1,6 @@
 # AI RAG Project
 
-This project provides a **multi-provider AI platform** with:
+This project provides a **multi-provider AI platform in C#** with:
 
 - OpenAI, Azure AI, and AWS Bedrock support
 - RAG (Retrieval-Augmented Generation) endpoints
@@ -12,4 +12,5 @@ This project provides a **multi-provider AI platform** with:
 ---
 
 ## **Structure**
+
 
