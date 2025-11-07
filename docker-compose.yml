@@ -1,17 +1,29 @@
 version: "3.8"
+networks:
+  aigateway-network:
+    driver: bridge
+
 services:
   api:
     build:
       context: .
       dockerfile: Api/Dockerfile
     ports:
-      - "5000:5000"
+      - "5000:80"
+    networks:
+      - aigateway-network
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
 
   blazor:
     build:
       context: .
       dockerfile: BlazorUI/Dockerfile
     ports:
-      - "5001:5001"
+      - "5001:80"
+    networks:
+      - aigateway-network
+    volumes:
+      - ./BlazorUI/wwwroot/appsettings.json:/usr/share/nginx/html/appsettings.json
     depends_on:
       - api
