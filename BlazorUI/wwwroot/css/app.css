@@ -2,6 +2,36 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+/* Make the app use full viewport height and layout sidebar + main */
+html, body, #app {
+    height: 100%;
+}
+
+.page {
+    display: flex;
+    min-height: 100vh; /* full viewport height */
+}
+
+.page .sidebar {
+    min-width: 220px;
+    max-width: 320px;
+    /* allow nav to control its background */
+}
+
+.page main {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+}
+
 h1:focus {
     outline: none;
 }
@@ -100,4 +130,63 @@ a, .btn-link {
 
 code {
     color: #c02d76;
+}
+
+/* Generic page row: each direct child inside .content becomes a full-width card */
+.content > * {
+    width: 100%;
+    background: #ffffff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* AiChatBox specific styling */
+.ai-chat-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ai-chat-box textarea {
+    width: 100%;
+    min-height: 120px;
+    resize: vertical;
+    padding: 0.6rem;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    font-size: 1rem;
+}
+
+.ai-chat-box p.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.ai-chat-box button {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(180deg,#1b6ec2 0%,#145fae 100%);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    align-self: center; /* center the button */
+    box-shadow: 0 4px 8px rgba(27,110,194,0.18);
+}
+
+.ai-chat-box button:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.ai-chat-box button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Make individual components visually distinct on small screens */
+@media (max-width: 767px) {
+    .page { flex-direction: column; }
+    .page .sidebar { width: 100%; }
+    .content { padding: 0.75rem; }
 }
